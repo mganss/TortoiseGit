@@ -121,7 +121,7 @@ private:
 
 	bool					m_bAbort;
 	bool					m_bDone;
-	DWORD					m_startTick;
+	ULONGLONG				m_startTick;
 
 	virtual void			DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	static UINT				ProgressThreadEntry(LPVOID pVoid);

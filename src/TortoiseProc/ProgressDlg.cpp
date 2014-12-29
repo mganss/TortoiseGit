@@ -44,7 +44,7 @@ CProgressDlg::CProgressDlg(CWnd* pParent /*=NULL*/)
 	, m_bShowCommand(true)
 	, m_bAbort(false)
 	, m_bDone(false)
-	, m_startTick(GetTickCount())
+	, m_startTick(GetTickCount64())
 	, m_BufStart(0)
 	, m_Git(&g_Git)
 {
@@ -326,7 +326,7 @@ UINT CProgressDlg::ProgressThread()
 	else
 		pfilename=&m_LogFile;
 
-	m_startTick = GetTickCount();
+	m_startTick = GetTickCount64();
 	m_GitStatus = RunCmdList(this, m_GitCmdList, m_GitDirList, m_bShowCommand, pfilename, &m_bAbort, &this->m_Databuf, m_Git);
 	return 0;
 }
@@ -347,7 +347,7 @@ LRESULT CProgressDlg::OnProgressUpdateUI(WPARAM wParam,LPARAM lParam)
 	if(wParam == MSG_PROGRESSDLG_END || wParam == MSG_PROGRESSDLG_FAILED)
 	{
 		CTraceToOutputDebugString::Instance()(_T(__FUNCTION__) _T(": got message: %d\n"), wParam);
-		DWORD tickSpent = GetTickCount() - m_startTick;
+		ULONGLONG tickSpent = GetTickCount64() - m_startTick;
 		CString strEndTime = CLoglistUtils::FormatDateAndTime(CTime::GetCurrentTime(), DATE_SHORTDATE, true, false);
 
 		if(m_bBufferAll)
@@ -390,7 +390,7 @@ LRESULT CProgressDlg::OnProgressUpdateUI(WPARAM wParam,LPARAM lParam)
 			log.Format(IDS_PROC_PROGRESS_GITUNCLEANEXIT, m_GitStatus);
 			CString err;
 			if (CRegDWORD(_T("Software\\TortoiseGit\\ShowGitexeTimings"), TRUE))
-				err.Format(_T("\r\n\r\n%s (%lu ms @ %s)\r\n"), (LPCTSTR)log, tickSpent, (LPCTSTR)strEndTime);
+				err.Format(_T("\r\n\r\n%s (%I64u ms @ %s)\r\n"), (LPCTSTR)log, tickSpent, (LPCTSTR)strEndTime);
 			else
 				err.Format(_T("\r\n\r\n%s\r\n"), (LPCTSTR)log);
 			InsertColorText(this->m_Log, err, RGB(255,0,0));
@@ -404,7 +404,7 @@ LRESULT CProgressDlg::OnProgressUpdateUI(WPARAM wParam,LPARAM lParam)
 			temp.LoadString(IDS_SUCCESS);
 			CString log;
 			if (CRegDWORD(_T("Software\\TortoiseGit\\ShowGitexeTimings"), TRUE))
-				log.Format(_T("\r\n%s (%lu ms @ %s)\r\n"), (LPCTSTR)temp, tickSpent, (LPCTSTR)strEndTime);
+				log.Format(_T("\r\n%s (%I64u ms @ %s)\r\n"), (LPCTSTR)temp, tickSpent, (LPCTSTR)strEndTime);
 			else
 				log.Format(_T("\r\n%s\r\n"), (LPCTSTR)temp);
 			InsertColorText(this->m_Log, log, RGB(0,0,255));

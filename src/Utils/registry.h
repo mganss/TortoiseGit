@@ -1,6 +1,7 @@
 // TortoiseGit - a Windows shell extension for easy version control
 
-// Copyright (C) 2003-2013 - TortoiseSVN
+// Copyright (C) 2014 - TortoiseGit
+// Copyright (C) 2003-2014 - TortoiseSVN
 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -292,15 +293,15 @@ private:
      * time stamp of the last registry lookup, i.e \ref read() call
      */
 
-    DWORD lastRead;
+    ULONGLONG lastRead;
 
     /**
      * \ref read() will be called, if \ref lastRead differs from the
      * current time stamp by more than this.
-     * (DWORD)(-1) -> no automatic refresh.
+     * (ULONGLONG)(-1) -> no automatic refresh.
      */
 
-    DWORD lookupInterval;
+    ULONGLONG lookupInterval;
 
     /**
      * Check time stamps etc.
@@ -351,7 +352,7 @@ public:
      * \param base a predefined base key like HKEY_LOCAL_MACHINE. see the SDK documentation for more information.
      * \param sam
      */
-    CRegTypedBase(DWORD updateInterval, const typename Base::StringT& key, const T& def, bool force = FALSE, HKEY base = HKEY_CURRENT_USER, REGSAM sam = 0);
+    CRegTypedBase(ULONGLONG updateInterval, const typename Base::StringT& key, const T& def, bool force = FALSE, HKEY base = HKEY_CURRENT_USER, REGSAM sam = 0);
 
     /**
      * reads the assigned value from the registry. Use this method only if you think the registry
@@ -377,9 +378,9 @@ public:
 template<class T, class Base>
 void CRegTypedBase<T, Base>::HandleAutoRefresh()
 {
-    if (m_read && (lookupInterval != (DWORD)(-1)))
+    if (m_read && (lookupInterval != (ULONGLONG)(-1)))
     {
-        DWORD currentTime = GetTickCount();
+        ULONGLONG currentTime = GetTickCount64();
         if (   (currentTime < lastRead)
             || (currentTime > lastRead + lookupInterval))
         {
@@ -393,7 +394,7 @@ CRegTypedBase<T, Base>::CRegTypedBase (const T& def)
     : m_value (def)
     , m_defaultvalue (def)
     , lastRead (0)
-    , lookupInterval ((DWORD)-1)
+    , lookupInterval((ULONGLONG)-1)
 {
 }
 
@@ -403,12 +404,12 @@ CRegTypedBase<T, Base>::CRegTypedBase (const typename Base::StringT& key, const 
     , m_value (def)
     , m_defaultvalue (def)
     , lastRead (0)
-    , lookupInterval ((DWORD)-1)
+    , lookupInterval((ULONGLONG)-1)
 {
 }
 
 template<class T, class Base>
-CRegTypedBase<T, Base>::CRegTypedBase (DWORD lookupInterval, const typename Base::StringT& key, const T& def, bool force, HKEY base, REGSAM sam)
+CRegTypedBase<T, Base>::CRegTypedBase(ULONGLONG lookupInterval, const typename Base::StringT& key, const T& def, bool force, HKEY base, REGSAM sam)
     : Base (key, force, base, sam)
     , m_value (def)
     , m_defaultvalue (def)
@@ -440,7 +441,7 @@ void CRegTypedBase<T, Base>::read()
     }
 
     m_read = true;
-    lastRead = GetTickCount();
+    lastRead = GetTickCount64();
 }
 
 template<class T, class Base>
@@ -462,7 +463,7 @@ void CRegTypedBase<T, Base>::write()
     }
     LastError = RegCloseKey(hKey);
 
-    lastRead = GetTickCount();
+    lastRead = GetTickCount64();
 }
 
 template<class T, class Base>
@@ -572,7 +573,7 @@ public:
      * \param sam
      */
     CRegDWORDCommon(const typename Base::StringT& key, DWORD def = 0, bool force = false, HKEY base = HKEY_CURRENT_USER, REGSAM sam = 0);
-    CRegDWORDCommon(DWORD lookupInterval, const typename Base::StringT& key, DWORD def = 0, bool force = false, HKEY base = HKEY_CURRENT_USER, REGSAM sam = 0);
+	CRegDWORDCommon(ULONGLONG lookupInterval, const typename Base::StringT& key, DWORD def = 0, bool force = false, HKEY base = HKEY_CURRENT_USER, REGSAM sam = 0);
 
     CRegDWORDCommon& operator=(DWORD rhs) {CRegTypedBase<DWORD, Base>::operator =(rhs); return *this;}
     CRegDWORDCommon& operator+=(DWORD d) { return *this = *this + d;}
@@ -602,7 +603,7 @@ CRegDWORDCommon<Base>::CRegDWORDCommon(const typename Base::StringT& key, DWORD 
 }
 
 template<class Base>
-CRegDWORDCommon<Base>::CRegDWORDCommon(DWORD lookupInterval, const typename Base::StringT& key, DWORD def, bool force, HKEY base, REGSAM sam)
+CRegDWORDCommon<Base>::CRegDWORDCommon(ULONGLONG lookupInterval, const typename Base::StringT& key, DWORD def, bool force, HKEY base, REGSAM sam)
     : CRegTypedBase<DWORD, Base> (lookupInterval, key, def, force, base, sam)
 {
 }
@@ -693,7 +694,7 @@ public:
      * \param sam
      */
     CRegStringCommon(const typename Base::StringT& key, const typename Base::StringT& def = _T(""), bool force = false, HKEY base = HKEY_CURRENT_USER, REGSAM sam = 0);
-    CRegStringCommon(DWORD lookupInterval, const typename Base::StringT& key, const typename Base::StringT& def = _T(""), bool force = false, HKEY base = HKEY_CURRENT_USER, REGSAM sam = 0);
+	CRegStringCommon(ULONGLONG lookupInterval, const typename Base::StringT& key, const typename Base::StringT& def = _T(""), bool force = false, HKEY base = HKEY_CURRENT_USER, REGSAM sam = 0);
 
     CRegStringCommon& operator=(const typename Base::StringT& rhs) {CRegTypedBase<StringT, Base>::operator =(rhs); return *this;}
     CRegStringCommon& operator+=(const typename Base::StringT& s) { return *this = (typename Base::StringT)*this + s; }
@@ -714,7 +715,7 @@ CRegStringCommon<Base>::CRegStringCommon(const typename Base::StringT& key, cons
 }
 
 template<class Base>
-CRegStringCommon<Base>::CRegStringCommon(DWORD lookupInterval, const typename Base::StringT& key, const typename Base::StringT& def, bool force, HKEY base, REGSAM sam)
+CRegStringCommon<Base>::CRegStringCommon(ULONGLONG lookupInterval, const typename Base::StringT& key, const typename Base::StringT& def, bool force, HKEY base, REGSAM sam)
     : CRegTypedBase<typename Base::StringT, Base> (lookupInterval, key, def, force, base, sam)
 {
 }

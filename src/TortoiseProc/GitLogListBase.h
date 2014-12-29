@@ -625,10 +625,6 @@ protected:
 
 	ColumnManager		m_ColumnManager;
 	DWORD				m_dwDefaultColumns;
-
-	typedef HRESULT (WINAPI *FNDRAWTHEMETEXTEX) (HTHEME, HDC, int, int, LPCWSTR, int, DWORD, LPRECT, const DTTOPTS *);
-	HMODULE				hUxTheme;
-	FNDRAWTHEMETEXTEX	pfnDrawThemeTextEx;
 	TCHAR               m_wszTip[8192];
 	char                m_szTip[8192];
 };

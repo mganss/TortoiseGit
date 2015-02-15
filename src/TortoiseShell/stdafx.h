@@ -42,6 +42,5 @@
 #pragma warning(pop)
 #include "SmartLibgit2Ref.h"
 
-#include "SysInfo.h"
 #include "DebugOutput.h"
 

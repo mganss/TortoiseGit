@@ -19,7 +19,6 @@
 #include "stdafx.h"
 #include "UpdateDownloader.h"
 #include "..\version.h"
-#include "SysInfo.h"
 
 CUpdateDownloader::CUpdateDownloader(HWND hwnd, bool force, UINT msg, CEvent *eventStop)
 : m_hWnd(hwnd)
@@ -110,7 +109,7 @@ DWORD CUpdateDownloader::DownloadFile(const CString& url, const CString& dest, b
 		return err;
 	}
 
-	if (enableDecoding && SysInfo::Instance().IsVistaOrLater())
+	if (enableDecoding)
 		HttpAddRequestHeaders(hResourceHandle, L"Accept-Encoding: gzip, deflate\r\n", (DWORD)-1, HTTP_ADDREQ_FLAG_ADD);
 
 	{

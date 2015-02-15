@@ -21,7 +21,6 @@
 #include <CommCtrl.h>
 #include "PicWindow.h"
 #include <math.h>
-#include "SysInfo.h"
 #include <memory>
 
 #pragma comment(lib, "Msimg32.lib")
@@ -1307,11 +1306,6 @@ void CPicWindow::Paint(HWND hwnd)
                 NONCLIENTMETRICS metrics = {0};
                 metrics.cbSize = sizeof(NONCLIENTMETRICS);
 
-                if (!SysInfo::Instance().IsVistaOrLater())
-                {
-                    metrics.cbSize -= sizeof(int);  // subtract the size of the iPaddedBorderWidth member which is not available on XP
-                }
-
                 SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &metrics, FALSE);
                 HFONT hFont = CreateFontIndirect(&metrics.lfStatusFont);
                 HFONT hFontOld = (HFONT)SelectObject(memDC, (HGDIOBJ)hFont);
@@ -1347,10 +1341,6 @@ void CPicWindow::Paint(HWND hwnd)
             // set the font
             NONCLIENTMETRICS metrics = {0};
             metrics.cbSize = sizeof(NONCLIENTMETRICS);
-            if (!SysInfo::Instance().IsVistaOrLater())
-            {
-                metrics.cbSize -= sizeof(int);  // subtract the size of the iPaddedBorderWidth member which is not available on XP
-            }
             SystemParametersInfo(SPI_GETNONCLIENTMETRICS, 0, &metrics, FALSE);
             HFONT hFont = CreateFontIndirect(&metrics.lfStatusFont);
             HFONT hFontOld = (HFONT)SelectObject(memDC, (HGDIOBJ)hFont);

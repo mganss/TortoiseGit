@@ -59,6 +59,8 @@ bool SubmoduleAddCommand::Execute()
 
 		CProgressDlg progress;
 		progress.m_GitCmd=cmd;
+		if (dlg.m_bAutoloadPuttyKeyFile && !dlg.m_strPuttyKeyFile.IsEmpty())
+			progress.m_PuttyKeyList.push_back(dlg.m_strPuttyKeyFile);
 		progress.DoModal();
 
 		if (progress.m_GitStatus == 0)
@@ -148,9 +150,19 @@ bool SubmoduleUpdateCommand::Execute()
 
 	for (size_t i = 0; i < submoduleUpdateDlg.m_PathList.size(); ++i)
 	{
+		CGit git;
 		CString str;
 		str.Format(_T("git.exe submodule update%s -- \"%s\""), (LPCTSTR)params, (LPCTSTR)submoduleUpdateDlg.m_PathList[i]);
 		progress.m_GitCmdList.push_back(str);
+
+		CString puttyKey;
+		CAutoRepository repo(submoduleUpdateDlg.m_PathList[i]);
+		if (repo)
+		{
+			CAutoConfig config(repo);
+			config.GetString(L"remote.origin.puttykeyfile", puttyKey);
+		}
+		progress.m_PuttyKeyList.push_back(puttyKey);
 	}
 
 	progress.DoModal();

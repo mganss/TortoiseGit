@@ -86,7 +86,7 @@ LRESULT CFindBar::DoCommand(int id, int msg)
 void CFindBar::DoFind(bool bFindPrev)
 {
 	int len = ::GetWindowTextLength(GetDlgItem(*this, IDC_FINDTEXT));
-	std::unique_ptr<TCHAR[]> findtext(new TCHAR[len + 1]);
+	auto findtext = std::make_unique<TCHAR[]>(len + 1);
 	if (!::GetWindowText(GetDlgItem(*this, IDC_FINDTEXT), findtext.get(), len + 1))
 		return;
 	std::wstring ft = std::wstring(findtext.get());

@@ -335,7 +335,7 @@ bool CTGitPath::Delete(bool bTrash, bool bShowErrorUI) const
 	{
 		if ((bTrash)||(IsDirectory()))
 		{
-			std::unique_ptr<TCHAR[]> buf(new TCHAR[m_sBackslashPath.GetLength() + 2]);
+			auto buf = std::make_unique<TCHAR[]>(m_sBackslashPath.GetLength() + 2);
 			_tcscpy_s(buf.get(), m_sBackslashPath.GetLength() + 2, m_sBackslashPath);
 			buf[m_sBackslashPath.GetLength()] = 0;
 			buf[m_sBackslashPath.GetLength()+1] = 0;
@@ -876,7 +876,7 @@ bool CTGitPath::HasStashDir() const
 		return false;
 
 	DWORD size = 0;
-	std::unique_ptr<char[]> buff(new char[filesize + 1]);
+	auto buff = std::make_unique<char[]>(filesize + 1);
 	ReadFile(hfile, buff.get(), filesize, &size, nullptr);
 	buff.get()[filesize] = '\0';
 

@@ -30,8 +30,7 @@ class CSmartBuffer : public FreeFunction
 public:
 	CSmartBuffer()
 	{
-		HandleType tmp = { 0 };
-		m_Ref = tmp;
+		m_Ref = { 0 };
 	}
 
 	operator HandleType*()

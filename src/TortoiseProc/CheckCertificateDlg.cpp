@@ -70,7 +70,7 @@ static CString getCertificateHash(HCRYPTPROV hCryptProv, ALG_ID algId, BYTE* cer
 	if (!CryptGetHashParam(hHash, HP_HASHSIZE, (BYTE *)&hashLen, &hashLenLen, 0))
 		goto finish;
 
-	pHash.reset(new BYTE[hashLen]);
+	pHash = std::make_unique<BYTE[]>(hashLen);
 	if (!CryptGetHashParam(hHash, HP_HASHVAL, pHash.get(), &hashLen, 0))
 		goto finish;
 
